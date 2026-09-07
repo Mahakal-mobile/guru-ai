@@ -12,7 +12,15 @@
 // Returns:
 // { reply: string, sources: [{ title, url }] }
 
-const GEMINI_MODEL = "gemini-2.5-flash";
+const response = await ai.models.generateContent({
+    model: 'gemini-3.6-flash',
+    contents: contents,
+    config: {
+        tools: [{ googleSearch: {} }],
+        systemInstruction: "Aap ek expert AI assistant aur hardware repair guru hain. Jab user camera se image bheje, toh use analyze karke hardware faults, shorting ya IC damage ko pehchan kar step-by-step solution batayein."
+    }
+});
+
 const GEMINI_ENDPOINT =
   `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
 
