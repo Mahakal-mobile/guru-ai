@@ -12,19 +12,32 @@
 // Returns:
 // { reply: string, sources: [{ title, url }] }
 
-        let response;
+                let response;
         
         try {
-            // सबसे पहले एकदम लेटेस्ट और फास्ट इंजन ट्राई करेगा
+            // पहला गियर: सबसे लेटेस्ट और फ़ास्ट मॉडल (3.6)
             response = await ai.models.generateContent({
                 model: 'gemini-3.6-flash',
                 contents: contents,
                 config: {
                     tools: [{ googleSearch: {} }],
-                    systemInstruction: "Aap ek expert AI assistant aur hardware repair guru hain. Live image dekh kar faults pehchane aur solution dein."
+                    systemInstruction: "You are Guru AI, an expert hardware repair technician and advanced assistant. When provided with live camera snapshots or images, carefully inspect them for hardware faults, short circuits, water damage, or IC issues, and provide clear step-by-step diagnostic and repair instructions. For general queries, use live internet search grounding to provide accurate, up-to-date information."
                 }
             });
         } catch (error) {
+            console.log("3.6 model busy ya available nahi hai, backup 1.5 model par switch ho raha hai...");
+            
+            // दूसरा गियर (Backup): अगर 3.6 ने काम नहीं किया, तो अपने आप 1.5 पकड़ लेगा
+            response = await ai.models.generateContent({
+                model: 'gemini-1.5-flash',
+                contents: contents,
+                config: {
+                    tools: [{ googleSearch: {} }],
+                    systemInstruction: "You are Guru AI, an expert hardware repair technician and advanced assistant. When provided with live camera snapshots or images, carefully inspect them for hardware faults, short circuits, water damage, or IC issues, and provide clear step-by-step diagnostic and repair instructions. For general queries, use live internet search grounding to provide accurate, up-to-date information."
+                }
+            });
+        }
+
             console.log("Main server busy ya band hai, backup model chal raha hai...");
             
             // अगर ऊपर वाला फेल हुआ, तो बिना एरर दिखाए यह बैकअप मॉडल चला देगा
@@ -38,13 +51,31 @@
             });
         }
 
-    model: 'gemini-3.6-flash',
-    contents: contents,
-    config: {
-        tools: [{ googleSearch: {} }],
-        systemInstruction: "Aap ek expert AI assistant aur hardware repair guru hain. Jab user camera se image bheje, toh use analyze karke hardware faults, shorting ya IC damage ko pehchan kar step-by-step solution batayein."
-    }
-});
+        let response;
+        
+        try {
+            // पहला गियर: सबसे लेटेस्ट और फ़ास्ट मॉडल (3.6)
+            response = await ai.models.generateContent({
+                model: 'gemini-3.6-flash',
+                contents: contents,
+                config: {
+                    tools: [{ googleSearch: {} }],
+                    systemInstruction: "You are Guru AI, an expert hardware repair technician and advanced assistant. When provided with live camera snapshots or images, carefully inspect them for hardware faults, short circuits, water damage, or IC issues, and provide clear step-by-step diagnostic and repair instructions. For general queries, use live internet search grounding to provide accurate, up-to-date information."
+                }
+            });
+        } catch (error) {
+            console.log("3.6 model busy ya available nahi hai, backup 1.5 model par switch ho raha hai...");
+            
+            // दूसरा गियर (Backup): अगर 3.6 ने काम नहीं किया, तो अपने आप 1.5 पकड़ लेगा
+            response = await ai.models.generateContent({
+                model: 'gemini-1.5-flash',
+                contents: contents,
+                config: {
+                    tools: [{ googleSearch: {} }],
+                    systemInstruction: "You are Guru AI, an expert hardware repair technician and advanced assistant. When provided with live camera snapshots or images, carefully inspect them for hardware faults, short circuits, water damage, or IC issues, and provide clear step-by-step diagnostic and repair instructions. For general queries, use live internet search grounding to provide accurate, up-to-date information."
+                }
+            });
+        }
 
 const GEMINI_ENDPOINT =
   `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
