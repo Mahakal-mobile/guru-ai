@@ -12,7 +12,32 @@
 // Returns:
 // { reply: string, sources: [{ title, url }] }
 
-const response = await ai.models.generateContent({
+        let response;
+        
+        try {
+            // सबसे पहले एकदम लेटेस्ट और फास्ट इंजन ट्राई करेगा
+            response = await ai.models.generateContent({
+                model: 'gemini-3.6-flash',
+                contents: contents,
+                config: {
+                    tools: [{ googleSearch: {} }],
+                    systemInstruction: "Aap ek expert AI assistant aur hardware repair guru hain. Live image dekh kar faults pehchane aur solution dein."
+                }
+            });
+        } catch (error) {
+            console.log("Main server busy ya band hai, backup model chal raha hai...");
+            
+            // अगर ऊपर वाला फेल हुआ, तो बिना एरर दिखाए यह बैकअप मॉडल चला देगा
+            response = await ai.models.generateContent({
+                model: 'gemini-1.5-flash', 
+                contents: contents,
+                config: {
+                    tools: [{ googleSearch: {} }],
+                    systemInstruction: "Aap ek expert AI assistant aur hardware repair guru hain. Live image dekh kar faults pehchane aur solution dein."
+                }
+            });
+        }
+
     model: 'gemini-3.6-flash',
     contents: contents,
     config: {
