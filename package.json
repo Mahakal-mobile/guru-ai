@@ -1,0 +1,9 @@
+{
+  "name": "guru-ai",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Guru AI — a premium, dark-themed AI chat dashboard with multimodal input and live web search grounding, deployed on Vercel.",
+  "engines": {
+    "node": ">=18"
+  }
+}
